@@ -12,7 +12,7 @@ import java.lang.annotation.Target;
 @Qualifier
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)
-public @interface JmsInboundTopic {
+public @interface JmsDestination {
 
     String value();
 

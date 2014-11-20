@@ -15,7 +15,7 @@
  */
 package fr.sewatech.jms.cdi.example;
 
-import fr.sewatech.jms.cdi.api.JmsInboundTopic;
+import fr.sewatech.jms.cdi.api.JmsDestination;
 
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
@@ -39,14 +39,14 @@ public class JmsObserverBean {
 
     private AtomicInteger count = new AtomicInteger();
 
-    public void onQuestion(@Observes @JmsInboundTopic(JNDI_QUESTION) Message message) throws JMSException {
+    public void onQuestion(@Observes @JmsDestination(JNDI_QUESTION) Message message) throws JMSException {
         logger.fine("Received : " + count.incrementAndGet());
         System.out.println("Message received " + ((TextMessage)message).getText() + " in " + this.getClass().getName() + " on Topic " + JNDI_QUESTION );
         sleep();
         logger.fine("Done : " + count.decrementAndGet());
     }
 
-    public void onQuestionBis(@Observes @JmsInboundTopic(JNDI_QUESTION_BIS) Message message) {
+    public void onQuestionBis(@Observes @JmsDestination(JNDI_QUESTION_BIS) Message message) {
         System.out.println("Message received " + message + " in " + this.getClass().getName() + " on Topic " + JNDI_QUESTION_BIS);
     }
 

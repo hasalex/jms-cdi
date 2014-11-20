@@ -1,6 +1,6 @@
 package fr.sewatech.jms.cdi.connector;
 
-import fr.sewatech.jms.cdi.api.JmsInboundTopic;
+import fr.sewatech.jms.cdi.api.JmsDestination;
 
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.spi.*;
@@ -30,8 +30,8 @@ public class JmsExtension implements Extension {
         logger.fine("ProcessObserverMethod");
         Set<Annotation> qualifiers = observerMethod.getObserverMethod().getObservedQualifiers();
         for (Annotation qualifier : qualifiers) {
-            if (qualifier instanceof JmsInboundTopic) {
-                destinationNames.add(((JmsInboundTopic) qualifier).value());
+            if (qualifier instanceof JmsDestination) {
+                destinationNames.add(((JmsDestination) qualifier).value());
             }
         }
     }
