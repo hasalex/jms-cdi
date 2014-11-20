@@ -2,7 +2,6 @@ package fr.sewatech.jms.cdi.connector;
 
 import javax.enterprise.inject.spi.BeanManager;
 import javax.jms.*;
-import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import java.util.concurrent.ExecutorService;
@@ -31,7 +30,8 @@ class JmsMessageReceiver implements Runnable {
     public void run() {
         try {
             connection = connect();
-            JMSConsumer consumer = connection.createConsumer((Destination) new InitialContext().lookup(destinationName));
+            Destination destination = InitialContext.doLookup(destinationName);
+            JMSConsumer consumer = connection.createConsumer(destination);
 
             ExecutorService executorService = getExecutorService();
 
@@ -81,8 +81,7 @@ class JmsMessageReceiver implements Runnable {
 
     private JMSContext connect() throws NamingException {
         logger.fine("Connecting to local ");
-        Context naming = new InitialContext();
-        ConnectionFactory connectionFactory = ConnectionFactory.class.cast(naming.lookup("java:/ConnectionFactory"));
+        ConnectionFactory connectionFactory = InitialContext.doLookup("java:/ConnectionFactory");
         return connectionFactory.createContext();
     }
 
