@@ -4,10 +4,10 @@ import fr.sewatech.jms.cdi.api.JmsDestination;
 
 import javax.enterprise.util.AnnotationLiteral;
 
-class TopicAnnotationLiteral extends AnnotationLiteral<JmsDestination> implements JmsDestination {
+class JmsDestinationAnnotationLiteral extends AnnotationLiteral<JmsDestination> implements JmsDestination {
     private String value;
 
-    TopicAnnotationLiteral(String value) {
+    JmsDestinationAnnotationLiteral(String value) {
         this.value = value;
     }
 

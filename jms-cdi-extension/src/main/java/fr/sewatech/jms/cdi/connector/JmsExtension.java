@@ -3,17 +3,13 @@ package fr.sewatech.jms.cdi.connector;
 import fr.sewatech.jms.cdi.api.JmsDestination;
 
 import javax.enterprise.event.Observes;
-import javax.enterprise.inject.spi.*;
+import javax.enterprise.inject.spi.AfterDeploymentValidation;
+import javax.enterprise.inject.spi.Extension;
+import javax.enterprise.inject.spi.ProcessObserverMethod;
 import javax.jms.Message;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 import java.util.logging.Logger;
 
 /**
@@ -24,11 +20,10 @@ public class JmsExtension implements Extension {
     private static final Logger logger = Logger.getLogger(JmsExtension.class.getName());
 
     private Set<String> destinationNames = new HashSet<>();
-    private List<JmsMessageReceiver> receivers = new ArrayList<>();
 
-    void registerTopic(@Observes ProcessObserverMethod<Message, ?> observerMethod) {
+    void registerDestination(@Observes ProcessObserverMethod<Message, ?> event) {
         logger.fine("ProcessObserverMethod");
-        Set<Annotation> qualifiers = observerMethod.getObserverMethod().getObservedQualifiers();
+        Set<Annotation> qualifiers = event.getObserverMethod().getObservedQualifiers();
         for (Annotation qualifier : qualifiers) {
             if (qualifier instanceof JmsDestination) {
                 destinationNames.add(((JmsDestination) qualifier).value());
@@ -36,30 +31,8 @@ public class JmsExtension implements Extension {
         }
     }
 
-    void afterDeploymentValidation(@Observes AfterDeploymentValidation afterDeploymentValidation, BeanManager beanManager) {
+    void afterDeploymentValidation(@Observes AfterDeploymentValidation event) {
         logger.fine("AfterDeploymentValidation ...");
-        for (String destinationName : destinationNames) {
-            JmsMessageReceiver receiver = new JmsMessageReceiver(destinationName, beanManager);
-            receivers.add(receiver);
-            newThread(receiver).start();
-        }
+        JmsInitializer.destinationNames = destinationNames;
     }
-
-    void shutdown(@Observes BeforeShutdown beforeShutdown) {
-        logger.fine("Before shutdown ...");
-        for (JmsMessageReceiver receiver : receivers) {
-            receiver.shutdown();
-        }
-    }
-
-    private Thread newThread(JmsMessageReceiver runnable) {
-        ThreadFactory threadFactory;
-        try {
-            threadFactory = InitialContext.doLookup("java:comp/DefaultManagedThreadFactory");
-        } catch (NamingException e) {
-            threadFactory = Executors.defaultThreadFactory();
-        }
-        return threadFactory.newThread(runnable);
-    }
-
 }

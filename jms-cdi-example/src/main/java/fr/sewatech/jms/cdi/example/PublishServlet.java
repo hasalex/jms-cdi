@@ -1,5 +1,8 @@
 package fr.sewatech.jms.cdi.example;
 
+import fr.sewatech.jms.cdi.connector.JmsInitializer;
+
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.jms.Destination;
@@ -18,11 +21,10 @@ import java.io.IOException;
  * @author Alexis Hassler
  */
 @JMSDestinationDefinitions({
-
         @JMSDestinationDefinition(
                 name = JmsObserverBean.JNDI_QUESTION,
-                interfaceName = "javax.jms.Queue"),
-
+                interfaceName = "javax.jms.Queue")
+        ,
         @JMSDestinationDefinition(
                 name = JmsObserverBean.JNDI_QUESTION_BIS,
                 interfaceName = "javax.jms.Queue")
@@ -36,6 +38,14 @@ public class PublishServlet extends HttpServlet {
 
     @Resource(mappedName=JmsObserverBean.JNDI_QUESTION)
     Destination destination;
+
+    @Inject
+    private JmsInitializer jmsInitializer;
+
+    public void init() {
+        jmsInitializer.init();
+    }
+
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         sendMessageAndForward(request, response);

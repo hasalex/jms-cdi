@@ -1,6 +1,6 @@
 package fr.sewatech.jms.cdi.connector;
 
-import javax.enterprise.inject.spi.BeanManager;
+import javax.enterprise.inject.spi.CDI;
 import javax.jms.*;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -18,20 +18,18 @@ class JmsMessageReceiver implements Runnable {
 
     private static final Logger logger = Logger.getLogger(JmsMessageReceiver.class.getName());
 
-    private BeanManager beanManager;
-    private JMSContext connection;
+    private JMSContext jmsContext;
     private String destinationName;
 
-    JmsMessageReceiver(String destinationName, BeanManager beanManager) {
-        this.beanManager = beanManager;
+    JmsMessageReceiver(String destinationName) {
         this.destinationName = destinationName;
     }
 
     public void run() {
         try {
-            connection = connect();
+            jmsContext = connect();
             Destination destination = InitialContext.doLookup(destinationName);
-            JMSConsumer consumer = connection.createConsumer(destination);
+            JMSConsumer consumer = jmsContext.createConsumer(destination);
 
             ExecutorService executorService = getExecutorService();
 
@@ -50,7 +48,7 @@ class JmsMessageReceiver implements Runnable {
     }
 
     void shutdown() {
-        connection.close();
+        jmsContext.close();
         logger.fine("JMS disconnected");
     }
 
@@ -75,13 +73,13 @@ class JmsMessageReceiver implements Runnable {
         }
 
         public void run() {
-            beanManager.fireEvent(message, new TopicAnnotationLiteral(destinationName));
+            CDI.current().getBeanManager().fireEvent(message, new JmsDestinationAnnotationLiteral(destinationName));
         }
     }
 
     private JMSContext connect() throws NamingException {
         logger.fine("Connecting to local ");
-        ConnectionFactory connectionFactory = InitialContext.doLookup("java:/ConnectionFactory");
+        ConnectionFactory connectionFactory = InitialContext.doLookup("java:comp/DefaultJMSConnectionFactory");
         return connectionFactory.createContext();
     }
 

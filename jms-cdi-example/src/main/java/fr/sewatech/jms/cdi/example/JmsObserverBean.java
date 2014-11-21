@@ -34,14 +34,14 @@ import java.util.logging.Logger;
 public class JmsObserverBean {
 
     private static final Logger logger = Logger.getLogger(JmsObserverBean.class.getName());
-    static final String JNDI_QUESTION = "java:/jms/swt/Question";
-    static final String JNDI_QUESTION_BIS = "java:/jms/swt/QuestionBis";
+    static final String JNDI_QUESTION = "java:global/jms/swt/Question";
+    static final String JNDI_QUESTION_BIS = "java:global/jms/swt/QuestionBis";
 
     private AtomicInteger count = new AtomicInteger();
 
     public void onQuestion(@Observes @JmsDestination(JNDI_QUESTION) Message message) throws JMSException {
         logger.fine("Received : " + count.incrementAndGet());
-        System.out.println("Message received " + ((TextMessage)message).getText() + " in " + this.getClass().getName() + " on Topic " + JNDI_QUESTION );
+        System.out.println("Message received " + ((TextMessage) message).getText() + " in " + this.getClass().getName() + " on Topic " + JNDI_QUESTION );
         sleep();
         logger.fine("Done : " + count.decrementAndGet());
     }
