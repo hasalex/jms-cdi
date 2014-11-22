@@ -1,6 +1,7 @@
-package fr.sewatech.jms.cdi.connector;
+package fr.sewatech.jms.cdi.connector.eventbased;
 
 import fr.sewatech.jms.cdi.api.JmsDestination;
+import fr.sewatech.jms.cdi.api.JmsListen;
 
 import javax.enterprise.util.AnnotationLiteral;
 

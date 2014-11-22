@@ -1,4 +1,4 @@
-package fr.sewatech.jms.cdi.connector;
+package fr.sewatech.jms.cdi.connector.eventbased;
 
 import javax.enterprise.inject.spi.CDI;
 import javax.jms.*;

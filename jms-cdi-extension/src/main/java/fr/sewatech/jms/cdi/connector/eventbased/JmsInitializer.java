@@ -1,4 +1,4 @@
-package fr.sewatech.jms.cdi.connector;
+package fr.sewatech.jms.cdi.connector.eventbased;
 
 import javax.annotation.PreDestroy;
 import javax.enterprise.context.ApplicationScoped;

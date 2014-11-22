@@ -1,1 +1,2 @@
-fr.sewatech.jms.cdi.connector.JmsExtension
+fr.sewatech.jms.cdi.connector.eventbased.JmsExtension
+fr.sewatech.jms.cdi.connector.methodbased.JmsExtension

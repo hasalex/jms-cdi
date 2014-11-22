@@ -1,8 +1,5 @@
 package fr.sewatech.jms.cdi.example;
 
-import fr.sewatech.jms.cdi.connector.JmsInitializer;
-
-import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import javax.inject.Inject;
 import javax.jms.Destination;
@@ -10,7 +7,6 @@ import javax.jms.JMSContext;
 import javax.jms.JMSDestinationDefinition;
 import javax.jms.JMSDestinationDefinitions;
 import javax.servlet.ServletException;
-import javax.servlet.ServletResponse;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -23,11 +19,11 @@ import java.io.IOException;
 @JMSDestinationDefinitions({
         @JMSDestinationDefinition(
                 name = JmsObserverBean.JNDI_QUESTION,
-                interfaceName = "javax.jms.Queue")
+                interfaceName = "javax.jms.Topic")
         ,
         @JMSDestinationDefinition(
                 name = JmsObserverBean.JNDI_QUESTION_BIS,
-                interfaceName = "javax.jms.Queue")
+                interfaceName = "javax.jms.Topic")
 
 })
 @WebServlet(name = "SendServlet", urlPatterns = "/")
@@ -40,10 +36,14 @@ public class PublishServlet extends HttpServlet {
     Destination destination;
 
     @Inject
-    private JmsInitializer jmsInitializer;
+    private fr.sewatech.jms.cdi.connector.eventbased.JmsInitializer jmsEventBasedInitializer;
+
+    @Inject
+    private fr.sewatech.jms.cdi.connector.methodbased.JmsInitializer jmsMethodBasedInitializer;
 
     public void init() {
-        jmsInitializer.init();
+        jmsEventBasedInitializer.init();
+        jmsMethodBasedInitializer.init();
     }
 
 
