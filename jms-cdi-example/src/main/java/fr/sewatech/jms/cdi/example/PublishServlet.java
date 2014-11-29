@@ -23,7 +23,7 @@ import java.io.IOException;
         ,
         @JMSDestinationDefinition(
                 name = JmsObserverBean.JNDI_QUESTION_BIS,
-                interfaceName = "javax.jms.Topic")
+                interfaceName = "javax.jms.Queue")
 
 })
 @WebServlet(name = "SendServlet", urlPatterns = "/")

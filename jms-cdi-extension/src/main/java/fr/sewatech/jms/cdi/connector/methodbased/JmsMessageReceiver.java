@@ -42,12 +42,10 @@ class JmsMessageReceiver implements Runnable {
                 executorService.execute(new MessageMethodAsyncCaller(message));
             }
 
+        } catch (IllegalStateRuntimeException e) {
+            logger.log(Level.INFO, "Receiver interrupted for destination " + destinationName);
         } catch (Exception e) {
-            if (e instanceof InterruptedException || e.getCause() instanceof InterruptedException) {
-                logger.log(Level.INFO, "Receiver interrupted for destination " + destinationName);
-            } else {
-                logger.log(Level.WARNING, "Receiver problem for destination " + destinationName, e);
-            }
+            logger.log(Level.WARNING, "Receiver problem for destination " + destinationName, e);
         }
     }
 
